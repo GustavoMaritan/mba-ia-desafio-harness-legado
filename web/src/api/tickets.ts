@@ -1,5 +1,11 @@
 import { apiFetch, getToken } from './client'
-import type { TicketCategory, TicketPriority, TicketStatus, TriageStatus } from '../../../api/src/domain/ticket'
+import { API_URL } from '../config'
+
+// Espelho dos tipos da API: o front não importa nada de api/ (gate G8).
+type TicketStatus = 'open' | 'in_progress' | 'resolved'
+export type TicketCategory = 'billing' | 'technical' | 'account' | 'other'
+export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent'
+export type TriageStatus = 'pending' | 'done' | 'failed'
 
 export type Ticket = {
   id: string
@@ -76,7 +82,7 @@ export function suggestReply(id: string) {
 export async function uploadAttachment(id: string, file: File) {
   const form = new FormData()
   form.append('file', file)
-  const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/tickets/${id}/attachments`, {
+  const res = await fetch(`${API_URL}/api/tickets/${id}/attachments`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${getToken()}` },
     body: form,
@@ -84,4 +90,10 @@ export async function uploadAttachment(id: string, file: File) {
   const data = await res.json()
   if (!res.ok) throw new Error(data.message || 'Falha no upload')
   return data as Attachment
+}
+
+export function downloadAttachment(id: string) {
+  return fetch(`${API_URL}/api/attachments/${id}/download`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  })
 }

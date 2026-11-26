@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Roda todos os gates (inclui G1 tipos e G2 lint) antes de cada commit e bloqueia se algum falhar.
+# Ativado pelo scripts/subir.sh com: git config core.hooksPath .githooks
+cd "$(git rev-parse --show-toplevel)" || exit 1
+echo "pre-commit: rodando bash scripts/gates.sh ..."
+if ! bash scripts/gates.sh; then
+  echo "" >&2
+  echo "pre-commit: commit bloqueado pelos gates. Corrija as violações listadas acima (não use --no-verify)." >&2
+  exit 1
+fi
