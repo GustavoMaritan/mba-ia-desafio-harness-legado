@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import { env } from '../config/env'
 import { TICKET_CATEGORIES, TICKET_PRIORITIES, TicketCategory, TicketPriority } from '../domain/ticket'
 
 export type Classification = {
@@ -48,7 +49,7 @@ export function suggestReplyFake(input: { customerName: string; title: string })
 }
 
 function openaiClient() {
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  return new OpenAI({ apiKey: env.openaiApiKey })
 }
 
 async function classifyWithOpenAI(ticket: TicketInput): Promise<Classification> {
@@ -73,22 +74,26 @@ async function classifyWithOpenAI(ticket: TicketInput): Promise<Classification> 
 }
 
 export async function classifyTicket(ticket: TicketInput): Promise<Classification> {
-  if (process.env.AI_MODE === 'openai') {
+  if (env.aiMode === 'openai') {
     return classifyWithOpenAI(ticket)
   }
   return classifyFake(ticket)
 }
 
 export async function suggestReply(input: { customerName: string; title: string; description: string }) {
-  if (process.env.AI_MODE === 'openai') {
+  if (env.aiMode === 'openai') {
     const completion = await openaiClient().chat.completions.create({
       model: MODEL,
       messages: [
-        { role: 'system', content: 'Você é um atendente de suporte educado. Escreva uma resposta curta em português.' },
+        {
+          role: 'system',
+          content: 'Você é um atendente de suporte. Escreva uma resposta curta e educada, em português, para o chamado.',
+        },
         { role: 'user', content: `Cliente: ${input.customerName}\nTítulo: ${input.title}\n\n${input.description}` },
       ],
     })
-    return completion.choices[0].message.content || ''
+    // pode vir null; a rota sempre devolveu o valor cru
+    return completion.choices[0].message.content
   }
   return suggestReplyFake(input)
 }

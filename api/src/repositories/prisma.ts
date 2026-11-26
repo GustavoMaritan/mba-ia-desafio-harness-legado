@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { env } from '../config/env'
+import { databaseUrl, env } from '../config/env'
 
 export const prisma = new PrismaClient({
-  datasources: { db: { url: env.DATABASE_URL } },
-  log: env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+  datasources: { db: { url: databaseUrl() } },
+  log: env.nodeEnv === 'development' ? ['warn', 'error'] : ['error'],
 })
