@@ -29,6 +29,10 @@ const envNoFront = [
     message: 'G5: import.meta.env só em web/src/config/',
   },
   {
+    selector: "MemberExpression[object.type='MetaProperty'][computed=true][property.value='env']",
+    message: 'G5: import.meta.env só em web/src/config/',
+  },
+  {
     selector: "VariableDeclarator[init.type='MetaProperty'] > ObjectPattern > Property[key.name='env']",
     message: 'G5: import.meta.env só em web/src/config/',
   },
