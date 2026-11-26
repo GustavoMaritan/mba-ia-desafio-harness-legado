@@ -2,7 +2,9 @@ import { defineConfig } from 'vitest/config'
 
 try {
   process.loadEnvFile('.env')
-} catch {}
+} catch {
+  // sem .env: segue com o ambiente do processo
+}
 
 export default defineConfig({
   test: {
