@@ -60,7 +60,7 @@ async function g1(pasta) {
   status.push([`G1 tipos (${pasta})`, r.code === 0, r.ms])
 }
 
-// G2 + G5 - eslint (as mensagens de G5 comecam com "G5:", ver eslint.config.mjs)
+// G2 + G5 - eslint (as mensagens de G5 trazem "G5:", ver eslint.config.mjs)
 async function eslint() {
   const r = await rodar(bin('.', 'eslint'), ['api', 'web', '--format', 'json', '--max-warnings', '0'])
   let dados
@@ -75,7 +75,8 @@ async function eslint() {
   let g5 = 0
   for (const arq of dados) {
     for (const m of arq.messages) {
-      const id = typeof m.message === 'string' && m.message.startsWith('G5:') ? 'G5' : 'G2'
+      // no-restricted-imports poe texto proprio antes da mensagem, entao procura o marcador em qualquer lugar
+      const id = typeof m.message === 'string' && /(^|\s)G5:/.test(m.message) ? 'G5' : 'G2'
       if (id === 'G5') g5++
       else g2++
       const regra = m.ruleId ?? 'parse'

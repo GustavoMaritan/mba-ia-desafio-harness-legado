@@ -2,7 +2,7 @@ import js from '@eslint/js'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
-// G2 (lint) e G5 (env so na pasta de config). As mensagens de G5 comecam com "G5:"
+// G2 (lint) e G5 (env so na pasta de config). As mensagens de G5 trazem "G5:"
 // para o scripts/gates.mjs separar das de G2.
 const envNaApi = [
   {
