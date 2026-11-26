@@ -15,7 +15,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U balcao -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U balcao -d postgres"]
       interval: 2s
       timeout: 3s
       retries: 30

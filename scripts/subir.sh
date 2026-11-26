@@ -57,6 +57,13 @@ if ! compose up -d --wait db > "$LOGS/postgres.log" 2>&1; then
   erro "se a porta estiver ocupada por outro serviço, rode com BALCAO_PG_PORT=<outra porta> (vale para todas as cópias)."
   exit 1
 fi
+# na primeira vez o container reinicia depois do init; espera aceitar conexao de verdade
+i=0
+until psql_admin "SELECT 1" > /dev/null 2>&1; do
+  i=$((i + 1))
+  [ "$i" -lt 30 ] || { erro "o Postgres não aceitou conexão (veja docker compose logs db)"; exit 1; }
+  sleep 1
+done
 if [ "$(psql_admin "SELECT 1 FROM pg_database WHERE datname = '$BALCAO_DB'")" != "1" ]; then
   psql_admin "CREATE DATABASE \"$BALCAO_DB\"" > /dev/null
   msg "base $BALCAO_DB criada"
